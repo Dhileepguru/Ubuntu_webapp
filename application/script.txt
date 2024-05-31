@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+    tools {
+        maven 'Maven 3.6.3'
+    }
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/Dhileepguru/Ubuntu_webapp.git'
+            }
+        }
+        stage('Compile') {
+            steps {
+                sh "mvn -f application/pom.xml clean compile"
+            }
+        }
+        stage('Build') {
+            steps {
+                sh "mvn -f application/pom.xml install -DskipTest"
+            }
+        }
+        stage("Test Cases") {
+            steps {
+                sh "mvn -f application/pom.xml test"
+            }
+        }
+        stage("Deploy") {
+    steps {
+        sh "cp application/target/application.war /opt/apache-tomcat-9.0.89/webapps"
+
+    }
+}
+
+
+    }
+}
+
+
+
+
+
+// sudo chown -R dhileep:jenkins /opt/apache-tomcat-9.0.89/webapps
+sudo chmod -R 775 /opt/apache-tomcat-9.0.89/webapps
+

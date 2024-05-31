@@ -1,0 +1,64 @@
+---
+- name: "playbook"
+  hosts: localhost
+  tasks:
+    - name: "display ls,pwd"
+      shell: |
+       pwd
+       ls
+      register: output
+    - name: "print output"
+      debug:
+        var: output.stdout_lines
+
+        
+----------------------
+
+---
+- name: "playbook"
+  hosts: all
+  connection: local
+  tasks:
+    - name: "display ls,pwd"
+      shell:  ls
+      register: "output"
+    - name: "print output"
+      debug:
+        var: output.stdout_lines
+
+=----------------------------
+
+---
+ - name: "Installing packages"
+   hosts: localhost
+   become: true
+   tasks:
+     - name: "creating a  ls"
+       shell: apt update
+     - name: "install packages"
+       apt:
+         name: python3
+         state: latest
+
+---------------------
+Role>mysql>tasks,defaults,vars,files,templates,handlers
+
+main.yml
+
+---
+- name: Install MySQL
+  apt:
+    name: mysql-server
+    state: present
+
+- name: Copy MySQL configuration
+  template:
+    src: my.cnf.j2
+    dest: /etc/mysql/my.cnf
+
+- name: Start MySQL
+  service:
+    name: mysql
+    state: started
+
+
